@@ -1,0 +1,331 @@
+---
+title: "Gap Spacing in CA NEON Sites"
+author: "Jon Weiner"
+date: "June 22, 2016"
+output: html_document
+---
+
+The goal of this project is to try and determine gap spacing across the CA NEON sites (TEAK, SOAP, and SJER). We will focus on the NEON plots that are in each of those areas.
+
+#### Initialize Libraries
+
+```{r import_libraries}
+#import libraries
+library(raster)
+library(rgdal)
+
+```
+
+#### Load CHM from TEAK, SOAP, and SJER and do initial plots
+
+```{r load_chms}
+#load CHMs
+
+SJER_chm <- raster("../NEONdata/D17-California/SJER/2013/lidar/SJER_lidarCHM.tif")
+SJER_chm
+
+plot(SJER_chm,
+     main = "SJER CHM")
+
+SOAP_chm <- raster("../NEONdata/D17-California/SOAP/2013/lidar/SOAP_lidarCHM.tif")
+SOAP_chm
+
+plot(SOAP_chm,
+     main = "SOAP CHM")
+
+TEAK_chm <- raster("../NEONdata/D17-California/TEAK/2013/lidar/TEAK_lidarCHM.tif")
+TEAK_chm
+
+plot(TEAK_chm,
+     main = "TEAK CHM")
+
+#plot histograms
+hist(log(SJER_chm),
+     main = "SJER CHM Hist in Log")
+hist(log(SOAP_chm),
+     main = "SOAP CHM Hist in Log")
+hist(log(TEAK_chm),
+     main = "TEAK CHM Hist in Log")
+```
+
+#### Open random locations
+
+```{r random_locations}
+
+SJER_rand_locs <- sampleRandom(SJER_chm, size = 100, xy = TRUE, sp = TRUE)
+SOAP_rand_locs <- sampleRandom(SOAP_chm, size = 100, xy = TRUE, sp = TRUE)
+TEAK_rand_locs <- sampleRandom(TEAK_chm, size = 100, xy = TRUE, sp = TRUE)
+
+```
+
+
+#### Test plot locations for sanity sake
+```{r plot_locations}
+
+plot(SJER_chm)
+plot(SJER_rand_locs,
+     add = TRUE)
+
+plot(SOAP_chm)
+plot(SOAP_rand_locs,
+     add = TRUE)
+
+plot(TEAK_chm)
+plot(TEAK_rand_locs,
+     add = TRUE)
+
+```
+
+### Extract values from points and calculate SD for SJER
+
+```{r extract_raster_info_SJER}
+#Extract values from points and calculate SD for SJER
+
+# 10m BUFFER
+
+SJER_locs_with_sd_10m <- extract(SJER_chm,
+                       SJER_rand_locs,
+                       buffer = 10,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SJER_locs_with_sd_10m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SJER_sd_10m <- SJER_locs_with_sd_10m@data[,4]
+
+#Plot histogram
+hist(SJER_sd_10m,
+     main = "SJER_10m_SD",
+     xlab = "Standard Deviation")
+
+# 25m BUFFER
+
+#SJER
+SJER_locs_with_sd_25m <- extract(SJER_chm,
+                       SJER_rand_locs,
+                       buffer = 25,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SJER_locs_with_sd_25m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SJER_sd_25m <- SJER_locs_with_sd_25m@data[,4]
+
+#Plot histogram
+hist(SJER_sd_25m,
+     main = "SJER_25m_SD",
+     xlab = "Standard Deviation")
+
+# 50m BUFFER
+
+#SJER
+SJER_locs_with_sd_50m <- extract(SJER_chm,
+                       SJER_rand_locs,
+                       buffer = 50,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SJER_locs_with_sd_50m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SJER_sd_50m <- SJER_locs_with_sd_50m@data[,4]
+
+#Plot histogram
+hist(SJER_sd_50m,
+     main = "SJER_50m_SD",
+     xlab = "Standard Deviation")
+
+# 100m BUFFER
+
+#SJER
+SJER_locs_with_sd_100m <- extract(SJER_chm,
+                       SJER_rand_locs,
+                       buffer = 100,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SJER_locs_with_sd_100m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SJER_sd_100m <- SJER_locs_with_sd_100m@data[,4]
+
+#Plot histogram
+hist(SJER_sd_100m,
+     main = "SJER_100m_SD",
+     xlab = "Standard Deviation")
+
+```
+
+### Extract values from points and calculate SD for SOAP
+
+```{r extract_raster_info_SOAP}
+#Extract values from points and calculate SD for SOAP
+
+# 10m BUFFER
+
+SOAP_locs_with_sd_10m <- extract(SOAP_chm,
+                       SOAP_rand_locs,
+                       buffer = 10,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SOAP_locs_with_sd_10m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SOAP_sd_10m <- SOAP_locs_with_sd_10m@data[,4]
+
+#Plot histogram
+hist(SOAP_sd_10m,
+     main = "SOAP_10m_SD",
+     xlab = "Standard Deviation")
+
+# 25m BUFFER
+
+SOAP_locs_with_sd_25m <- extract(SOAP_chm,
+                       SOAP_rand_locs,
+                       buffer = 25,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SOAP_locs_with_sd_25m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SOAP_sd_25m <- SOAP_locs_with_sd_25m@data[,4]
+
+#Plot histogram
+hist(SOAP_sd_25m,
+     main = "SOAP_25m_SD",
+     xlab = "Standard Deviation")
+
+# 50m BUFFER
+
+SOAP_locs_with_sd_50m <- extract(SOAP_chm,
+                       SOAP_rand_locs,
+                       buffer = 50,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SOAP_locs_with_sd_50m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SOAP_sd_50m <- SOAP_locs_with_sd_50m@data[,4]
+
+#Plot histogram
+hist(SOAP_sd_50m,
+     main = "SOAP_50m_SD",
+     xlab = "Standard Deviation")
+
+# 100m BUFFER
+
+SOAP_locs_with_sd_100m <- extract(SOAP_chm,
+                       SOAP_rand_locs,
+                       buffer = 100,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(SOAP_locs_with_sd_100m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+SOAP_sd_100m <- SOAP_locs_with_sd_100m@data[,4]
+
+#Plot histogram
+hist(SOAP_sd_100m,
+     main = "SOAP_100m_SD",
+     xlab = "Standard Deviation")
+
+```
+
+### Extract values from points and calculate SD for TEAK
+
+```{r extract_raster_info_TEAK}
+
+#Extract values from points and calculate SD for TEAK
+
+# 10m BUFFER
+
+TEAK_locs_with_sd_10m <- extract(TEAK_chm,
+                       TEAK_rand_locs,
+                       buffer = 10,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(TEAK_locs_with_sd_10m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+TEAK_sd_10m <- TEAK_locs_with_sd_10m@data[,4]
+
+#Plot histogram
+hist(TEAK_sd_10m,
+     main = "TEAK_10m_SD",
+     xlab = "Standard Deviation")
+
+# 25m BUFFER
+
+TEAK_locs_with_sd_25m <- extract(TEAK_chm,
+                       TEAK_rand_locs,
+                       buffer = 25,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(TEAK_locs_with_sd_25m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+TEAK_sd_25m <- TEAK_locs_with_sd_25m@data[,4]
+
+#Plot histogram
+hist(TEAK_sd_25m,
+     main = "TEAK_25m_SD",
+     xlab = "Standard Deviation")
+
+# 50m BUFFER
+
+TEAK_locs_with_sd_50m <- extract(TEAK_chm,
+                       TEAK_rand_locs,
+                       buffer = 50,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(TEAK_locs_with_sd_50m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+TEAK_sd_50m <- TEAK_locs_with_sd_50m@data[,4]
+
+#Plot histogram
+hist(TEAK_sd_50m,
+     main = "TEAK_50m_SD",
+     xlab = "Standard Deviation")
+
+TEAK_locs_with_sd_100m <- extract(TEAK_chm,
+                       TEAK_rand_locs,
+                       buffer = 100,
+                       fun = sd,
+                       sp = TRUE,
+                       stringAsFactors = F)
+#Rename Columns
+names(TEAK_locs_with_sd_100m@data) <- c("x", "y", "Loc_Ht", "Std Dev" )
+
+#Pull Std Devs
+TEAK_sd_100m <- TEAK_locs_with_sd_100m@data[,4]
+
+#Plot histogram
+hist(TEAK_sd_100m,
+     main = "TEAK_100m_SD",
+     xlab = "Standard Deviation")
+
+```
+
+
+
